@@ -1,0 +1,36 @@
+services:
+  fastapi_app:
+    container_name: fapi
+    image: ht
+    build: .
+    command: python src/main.py
+    depends_on:
+      postgresql:
+        condition: service_healthy
+    ports:
+      - 3000:8000
+    environment:
+      - DATABASE_URI=postgresql+asyncpg://postgres:1234@postgresql/postgres
+    restart: always
+  postgresql:
+    container_name: psql
+    image: postgres
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=1234
+      - POSTGRES_USER=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - 5433:5432
+    volumes:
+      - db-data:/var/lib/postgresql/database
+    restart: always
+
+    
+      
+volumes:
+  db-data:

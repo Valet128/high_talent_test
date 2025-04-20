@@ -30,7 +30,8 @@ async def create_table(table: TableSchema, session: SessionDep):
     
 @router.delete('/tables/', tags=["Tables"])
 async def delete_table(id: int, session: SessionDep):
-    
+    if id < 1:
+        return {"response": "Enter a positive number"}
     table_query = select(TableModel).where(TableModel.id == id)
     table = await session.execute(table_query)
     

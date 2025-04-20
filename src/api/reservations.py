@@ -87,6 +87,8 @@ async def create_reservation(reservation: ReservationSchema, session: SessionDep
 
 @router.delete('/reservations/', tags=["Reservations"])
 async def delete_reservation(id: int, session: SessionDep):
+    if id < 1:
+        return {"response": "Enter a positive number"}
     reservation_query = select(ReservationModel).where(ReservationModel.id == id)
     reservation = await session.execute(reservation_query)
     
